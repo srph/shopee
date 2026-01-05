@@ -71,23 +71,25 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
 4. **Test specific dates** (simulate scenarios):
 
    ```bash
-   # Simulate 2.2 sale day
-   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-02 --dry-run
+   # Note: when passing flags to a Bun script, use `--` (Bun convention)
 
-   # 1 week before 3.3
-   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-26 --dry-run
+   # Simulate 2.2 sale day (dry run)
+   bun run remind -- --date=2026-02-02 --dry-run
 
-   # 2 days before 4.4
-   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-04-02 --dry-run
+   # 1 week before 3.3 (dry run)
+   bun run remind -- --date=2026-02-26 --dry-run
 
-   # 1 day before 5.5
-   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-05-04 --dry-run
+   # 2 days before 4.4 (dry run)
+   bun run remind -- --date=2026-04-02 --dry-run
+
+   # 1 day before 5.5 (dry run)
+   bun run remind -- --date=2026-05-04 --dry-run
    ```
 
 5. **Real post** (actually sends to Discord):
    ```bash
    # Remove --dry-run to post for real
-   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-02
+   bun run remind -- --date=2026-02-02
    ```
 
 ### Test GitHub Actions Workflow
@@ -109,33 +111,26 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
 ### 7 Days Before
 
 ```
-🛒 Heads up: Shopee 2.2 sale is in 1 week (on February 2, 2026)!
-Start prepping those carts and wishlists. 🎯
+🛒 Shopee 2.2 in 1 week. Prep your cart.
 ```
 
 ### 2 Days Before
 
 ```
-🔥 Shopee 2.2 sale in 2 days (February 2, 2026)!
-Check your vouchers and stackable deals. Don't sleep on this! 💰
+🔥 Shopee 2.2 in 2 days. Check vouchers.
 ```
 
 ### 1 Day Before
 
 ```
-⏰ Tomorrow is Shopee 2.2 (February 2, 2026)!
-Last chance to finalize your wishlist. Don't sleep on those vouchers! 🚨
+⏰ Shopee 2.2 is tomorrow. Finalize your wishlist.
 ```
 
 ### The Day Of (Special)
 
 ```
 🎉 TODAY IS SHOPEE 2.2! 🎉
-
-It's go time! Drop your best deals in this channel.
-Time to speedrun that checkout. May the fastest clickers win! 🏃‍♂️💨
-
-*Bili na, walang awa!* 🛍️
+Drop deals here. Checkout speedrun time. 🏃‍♂️💨
 ```
 
 ## 🛠️ Technical Stack

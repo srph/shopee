@@ -16,6 +16,48 @@ interface SaleDate {
   day: number;
 }
 
+function wrapText(text: string, width: number): string[] {
+  const hardLines = text.split("\n");
+  const out: string[] = [];
+
+  for (const hardLine of hardLines) {
+    const words = hardLine.split(/\s+/).filter(Boolean);
+    if (words.length === 0) {
+      out.push("");
+      continue;
+    }
+
+    let line = "";
+    for (const word of words) {
+      if (line.length === 0) {
+        line = word;
+        continue;
+      }
+
+      if (line.length + 1 + word.length <= width) {
+        line = `${line} ${word}`;
+      } else {
+        out.push(line);
+        line = word;
+      }
+    }
+    if (line.length > 0) out.push(line);
+  }
+
+  return out;
+}
+
+function boxPreview(text: string, maxInnerWidth = 72): string {
+  const lines = wrapText(text, maxInnerWidth);
+  const innerWidth = Math.max(1, ...lines.map((l) => l.length));
+
+  const top = `┌${"─".repeat(innerWidth + 2)}┐`;
+  const bottom = `└${"─".repeat(innerWidth + 2)}┘`;
+  const middle = lines.map((l) => `│ ${l.padEnd(innerWidth, " ")} │`);
+
+  return [top, ...middle, bottom].join("\n");
+}
+
 /**
  * Generate the 12 monthly Shopee sale dates (1.1, 2.2, ..., 12.12)
  */
@@ -99,6 +141,10 @@ async function postToDiscord(message: string): Promise<void> {
  * Main execution
  */
 async function main() {
+  if (dryRun) {
+    console.log("🏃 DRY RUN: No Discord message will be posted (preview + logs only).");
+  }
+
   // Determine "today" in SGT
   const today = dateOverride
     ? DateTime.fromISO(dateOverride, { zone: TIMEZONE }).startOf("day")
@@ -127,10 +173,12 @@ async function main() {
   }
 
   const message = getMessage(daysUntilSale, nextSale);
-  console.log(`\n📝 Message to send:\n${message}\n`);
+  console.log("\n📝 Message preview:");
+  console.log(boxPreview(message));
+  console.log("");
 
   if (dryRun) {
-    console.log("🏃 DRY RUN: Message not posted to Discord");
+    console.log("✅ Dry run complete (nothing posted).");
     return;
   }
 
