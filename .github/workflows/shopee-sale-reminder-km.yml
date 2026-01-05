@@ -21,7 +21,6 @@ on:
 jobs:
   remind:
     runs-on: ubuntu-latest
-    environment: km
 
     steps:
       - name: Checkout code
@@ -37,7 +36,7 @@ jobs:
 
       - name: Run reminder script
         env:
-          DISCORD_WEBHOOK_URL_KM: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL_KM: ${{ secrets.DISCORD_WEBHOOK_URL_KM }}
         run: |
           ARGS="--channel=km"
           if [ -n "${{ inputs.date }}" ]; then
@@ -47,4 +46,3 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           bun run src/remind.ts $ARGS
-

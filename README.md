@@ -41,17 +41,11 @@ Repeat the same steps but pick the **UK channel** and copy that webhook URL.
 ### 2. Create GitHub Actions Environments
 
 1. Push this repo to GitHub
-2. Go to your repo: **Settings → Environments**
-3. Click **New environment**, name it `km`, click **Configure environment**
-4. Under **Environment secrets**, click **Add secret**:
-   - Name: `DISCORD_WEBHOOK_URL`
-   - Value: paste the **KM** webhook URL
-   - Save
-5. Go back to **Environments**, repeat for `uk`:
-   - Create environment `uk`
-   - Add secret `DISCORD_WEBHOOK_URL` with the **UK** webhook URL
-
-Note: even though the secret is named `DISCORD_WEBHOOK_URL` in GitHub, each workflow maps it to a channel-specific env var (`DISCORD_WEBHOOK_URL_KM` / `DISCORD_WEBHOOK_URL_UK`) at runtime.
+2. Go to your repo: **Settings → Secrets and variables → Actions**
+3. Click **New repository secret** and add these two secrets:
+   - `DISCORD_WEBHOOK_URL_KM` = paste the **KM** webhook URL
+   - `DISCORD_WEBHOOK_URL_UK` = paste the **UK** webhook URL
+4. Save
 
 ### 3. Enable GitHub Actions
 
