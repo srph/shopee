@@ -2,7 +2,7 @@
   "name": "shopee-sale-reminder",
   "version": "1.0.0",
   "description": "Discord bot that reminds channel of monthly Shopee N.N sales",
-  "main": "dist/remind.js",
+  "main": "src/remind.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
