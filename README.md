@@ -52,7 +52,7 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
 1. **Install dependencies:**
 
    ```bash
-   npm install
+   bun install
    ```
 
 2. **Set up environment:**
@@ -65,29 +65,29 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
 3. **Dry run** (no Discord post, just logs):
 
    ```bash
-   npm run remind:dry
+   bun run remind:dry
    ```
 
 4. **Test specific dates** (simulate scenarios):
 
    ```bash
    # Simulate 2.2 sale day
-   DISCORD_WEBHOOK_URL=your_url node --loader ts-node/esm src/remind.ts --date=2026-02-02 --dry-run
+   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-02 --dry-run
 
    # 1 week before 3.3
-   DISCORD_WEBHOOK_URL=your_url node --loader ts-node/esm src/remind.ts --date=2026-02-26 --dry-run
+   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-26 --dry-run
 
    # 2 days before 4.4
-   DISCORD_WEBHOOK_URL=your_url node --loader ts-node/esm src/remind.ts --date=2026-04-02 --dry-run
+   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-04-02 --dry-run
 
    # 1 day before 5.5
-   DISCORD_WEBHOOK_URL=your_url node --loader ts-node/esm src/remind.ts --date=2026-05-04 --dry-run
+   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-05-04 --dry-run
    ```
 
 5. **Real post** (actually sends to Discord):
    ```bash
    # Remove --dry-run to post for real
-   DISCORD_WEBHOOK_URL=your_url node --loader ts-node/esm src/remind.ts --date=2026-02-02
+   DISCORD_WEBHOOK_URL=your_url bun run src/remind.ts --date=2026-02-02
    ```
 
 ### Test GitHub Actions Workflow
@@ -140,7 +140,7 @@ Time to speedrun that checkout. May the fastest clickers win! 🏃‍♂️💨
 
 ## 🛠️ Technical Stack
 
-- **Runtime:** Node.js 20+ with TypeScript
+- **Runtime:** Bun 1.0+ (native TypeScript)
 - **Date/time:** Luxon (timezone-safe)
 - **Scheduler:** GitHub Actions cron (`0 2 * * *` = 02:00 UTC = 10:00 SGT)
 - **Delivery:** Discord Incoming Webhooks (no bot token needed)

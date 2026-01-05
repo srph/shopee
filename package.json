@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "remind": "node --loader ts-node/esm src/remind.ts",
-    "remind:dry": "node --loader ts-node/esm src/remind.ts --dry-run"
+    "remind": "bun run src/remind.ts",
+    "remind:dry": "bun run src/remind.ts --dry-run"
   },
   "keywords": [
     "discord",
@@ -23,10 +23,9 @@
   "devDependencies": {
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.11.5",
-    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=18"
+    "bun": ">=1.0"
   }
 }
