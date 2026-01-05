@@ -51,6 +51,8 @@ Repeat the same steps but pick the **UK channel** and copy that webhook URL.
    - Create environment `uk`
    - Add secret `DISCORD_WEBHOOK_URL` with the **UK** webhook URL
 
+Note: even though the secret is named `DISCORD_WEBHOOK_URL` in GitHub, each workflow maps it to a channel-specific env var (`DISCORD_WEBHOOK_URL_KM` / `DISCORD_WEBHOOK_URL_UK`) at runtime.
+
 ### 3. Enable GitHub Actions
 
 Two workflows are configured:
@@ -80,31 +82,29 @@ Both will run daily at 10:00 AM SGT once you push to GitHub.
 
    ```bash
    # Test KM channel
-   bun run remind:km
+   bun run remind:km:dry
 
    # Test UK channel
-   bun run remind:uk
+   bun run remind:uk:dry
    ```
 
 4. **Test specific dates** (simulate scenarios):
 
    ```bash
-   # Note: when passing flags to a Bun script, use `--` (Bun convention)
-
    # Simulate 2.2 sale day on KM channel (dry run)
-   bun run remind -- --channel=km --date=2026-02-02 --dry-run
+   bun run remind:km:dry -- --date=2026-02-02
 
    # Simulate 1 week before 3.3 on UK channel (dry run)
-   bun run remind -- --channel=uk --date=2026-02-26 --dry-run
+   bun run remind:uk:dry -- --date=2026-02-26
 
    # 2 days before 4.4 on KM channel (dry run)
-   bun run remind -- --channel=km --date=2026-04-02 --dry-run
+   bun run remind:km:dry -- --date=2026-04-02
    ```
 
 5. **Real post** (actually sends to Discord):
    ```bash
    # Remove --dry-run to post for real
-   bun run remind -- --channel=km --date=2026-02-02
+   bun run remind:km -- --date=2026-02-02
    ```
 
 ### Test GitHub Actions Workflows

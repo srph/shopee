@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "remind": "bun run src/remind.ts",
-    "remind:dry": "bun run src/remind.ts --dry-run",
-    "remind:km": "bun run src/remind.ts --channel=km --dry-run",
-    "remind:uk": "bun run src/remind.ts --channel=uk --dry-run"
+    "remind:km": "bun run src/remind.ts --channel=km",
+    "remind:uk": "bun run src/remind.ts --channel=uk",
+    "remind:km:dry": "bun run src/remind.ts --channel=km --dry-run",
+    "remind:uk:dry": "bun run src/remind.ts --channel=uk --dry-run"
   },
   "keywords": [
     "discord",

@@ -7,20 +7,28 @@ const dateOverride = args
   .find((arg) => arg.startsWith("--date="))
   ?.split("=")[1];
 const dryRun = args.includes("--dry-run");
-const channel = args
-  .find((arg) => arg.startsWith("--channel="))
-  ?.split("=")[1];
+const channel = args.find((arg) => arg.startsWith("--channel="))?.split("=")[1];
 
 const TIMEZONE = "Asia/Singapore";
 
-// Select webhook URL based on channel (for local testing with multiple channels)
-const WEBHOOK_URL = channel
-  ? channel.toLowerCase() === "km"
-    ? process.env.DISCORD_WEBHOOK_URL_KM
-    : channel.toLowerCase() === "uk"
-    ? process.env.DISCORD_WEBHOOK_URL_UK
-    : process.env.DISCORD_WEBHOOK_URL
-  : process.env.DISCORD_WEBHOOK_URL; // Fall back to generic for backwards compat
+function getWebhookUrl(): string | undefined {
+  const km = process.env.DISCORD_WEBHOOK_URL_KM;
+  const uk = process.env.DISCORD_WEBHOOK_URL_UK;
+
+  const normalizedChannel = channel?.toLowerCase();
+
+  if (normalizedChannel === "km") return km;
+  if (normalizedChannel === "uk") return uk;
+  if (normalizedChannel) {
+    throw new Error(
+      `Invalid --channel value: "${channel}". Expected --channel=km or --channel=uk.`
+    );
+  }
+
+  throw new Error("Missing --channel. Use --channel=km or --channel=uk.");
+}
+
+const WEBHOOK_URL = getWebhookUrl();
 
 interface SaleDate {
   month: number;
@@ -129,11 +137,13 @@ function getMessage(offset: number, saleDate: DateTime): string {
  * Post message to Discord webhook
  */
 async function postToDiscord(message: string): Promise<void> {
-  if (!process.env.DISCORD_WEBHOOK_URL) {
-    throw new Error("DISCORD_WEBHOOK_URL environment variable is not set");
+  if (!WEBHOOK_URL) {
+    throw new Error(
+      "Discord webhook URL is not set. Provide DISCORD_WEBHOOK_URL_KM or DISCORD_WEBHOOK_URL_UK (and optionally --channel=km|uk)."
+    );
   }
 
-  const response = await fetch(process.env.DISCORD_WEBHOOK_URL, {
+  const response = await fetch(WEBHOOK_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

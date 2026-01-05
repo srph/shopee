@@ -37,9 +37,9 @@ jobs:
 
       - name: Run reminder script
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL_KM: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          ARGS=""
+          ARGS="--channel=km"
           if [ -n "${{ inputs.date }}" ]; then
             ARGS="$ARGS --date=${{ inputs.date }}"
           fi
