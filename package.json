@@ -1,0 +1,32 @@
+{
+  "name": "shopee-sale-reminder",
+  "version": "1.0.0",
+  "description": "Discord bot that reminds channel of monthly Shopee N.N sales",
+  "main": "dist/remind.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "remind": "node --loader ts-node/esm src/remind.ts",
+    "remind:dry": "node --loader ts-node/esm src/remind.ts --dry-run"
+  },
+  "keywords": [
+    "discord",
+    "shopee",
+    "reminder",
+    "bot"
+  ],
+  "author": "Kier",
+  "license": "MIT",
+  "dependencies": {
+    "luxon": "^3.4.4"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.11.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
