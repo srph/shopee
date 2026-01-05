@@ -11,14 +11,29 @@ const channel = args.find((arg) => arg.startsWith("--channel="))?.split("=")[1];
 
 const TIMEZONE = "Asia/Singapore";
 
-function getWebhookUrl(): string | undefined {
-  const km = process.env.DISCORD_WEBHOOK_URL_KM;
-  const uk = process.env.DISCORD_WEBHOOK_URL_UK;
-
+function getWebhookUrl(): string {
   const normalizedChannel = channel?.toLowerCase();
 
-  if (normalizedChannel === "km") return km;
-  if (normalizedChannel === "uk") return uk;
+  if (normalizedChannel === "km") {
+    const km = process.env.DISCORD_WEBHOOK_URL_KM;
+    if (!km) {
+      throw new Error(
+        "Missing DISCORD_WEBHOOK_URL_KM for --channel=km. Set it in the workflow env or your local .env."
+      );
+    }
+    return km;
+  }
+
+  if (normalizedChannel === "uk") {
+    const uk = process.env.DISCORD_WEBHOOK_URL_UK;
+    if (!uk) {
+      throw new Error(
+        "Missing DISCORD_WEBHOOK_URL_UK for --channel=uk. Set it in the workflow env or your local .env."
+      );
+    }
+    return uk;
+  }
+
   if (normalizedChannel) {
     throw new Error(
       `Invalid --channel value: "${channel}". Expected --channel=km or --channel=uk.`
@@ -137,12 +152,6 @@ function getMessage(offset: number, saleDate: DateTime): string {
  * Post message to Discord webhook
  */
 async function postToDiscord(message: string): Promise<void> {
-  if (!WEBHOOK_URL) {
-    throw new Error(
-      "Discord webhook URL is not set. Provide DISCORD_WEBHOOK_URL_KM or DISCORD_WEBHOOK_URL_UK (and optionally --channel=km|uk)."
-    );
-  }
-
   const response = await fetch(WEBHOOK_URL, {
     method: "POST",
     headers: {
