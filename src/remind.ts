@@ -9,7 +9,6 @@ const dateOverride = args
 const dryRun = args.includes("--dry-run");
 
 const TIMEZONE = "Asia/Singapore";
-const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
 interface SaleDate {
   month: number;
@@ -118,11 +117,11 @@ function getMessage(offset: number, saleDate: DateTime): string {
  * Post message to Discord webhook
  */
 async function postToDiscord(message: string): Promise<void> {
-  if (!WEBHOOK_URL) {
+  if (!process.env.DISCORD_WEBHOOK_URL) {
     throw new Error("DISCORD_WEBHOOK_URL environment variable is not set");
   }
 
-  const response = await fetch(WEBHOOK_URL, {
+  const response = await fetch(process.env.DISCORD_WEBHOOK_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -142,7 +141,9 @@ async function postToDiscord(message: string): Promise<void> {
  */
 async function main() {
   if (dryRun) {
-    console.log("🏃 DRY RUN: No Discord message will be posted (preview + logs only).");
+    console.log(
+      "🏃 DRY RUN: No Discord message will be posted (preview + logs only)."
+    );
   }
 
   // Determine "today" in SGT
