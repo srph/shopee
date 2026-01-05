@@ -80,10 +80,10 @@ Both will run daily at 10:00 AM SGT once you push to GitHub.
 
    ```bash
    # Test KM channel
-   bun run remind -- --channel=km --dry-run
+   bun run remind:km
 
    # Test UK channel
-   bun run remind -- --channel=uk --dry-run
+   bun run remind:uk
    ```
 
 4. **Test specific dates** (simulate scenarios):
