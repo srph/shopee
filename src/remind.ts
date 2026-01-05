@@ -7,8 +7,20 @@ const dateOverride = args
   .find((arg) => arg.startsWith("--date="))
   ?.split("=")[1];
 const dryRun = args.includes("--dry-run");
+const channel = args
+  .find((arg) => arg.startsWith("--channel="))
+  ?.split("=")[1];
 
 const TIMEZONE = "Asia/Singapore";
+
+// Select webhook URL based on channel (for local testing with multiple channels)
+const WEBHOOK_URL = channel
+  ? channel.toLowerCase() === "km"
+    ? process.env.DISCORD_WEBHOOK_URL_KM
+    : channel.toLowerCase() === "uk"
+    ? process.env.DISCORD_WEBHOOK_URL_UK
+    : process.env.DISCORD_WEBHOOK_URL
+  : process.env.DISCORD_WEBHOOK_URL; // Fall back to generic for backwards compat
 
 interface SaleDate {
   month: number;

@@ -1,4 +1,4 @@
-name: Shopee Sale Reminder
+name: Shopee Sale Reminder (KM)
 
 on:
   # Daily at 02:00 UTC (10:00 Asia/Singapore)
@@ -21,6 +21,7 @@ on:
 jobs:
   remind:
     runs-on: ubuntu-latest
+    environment: km
 
     steps:
       - name: Checkout code
@@ -46,3 +47,4 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           bun run src/remind.ts $ARGS
+

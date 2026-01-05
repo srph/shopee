@@ -24,26 +24,40 @@ The bot runs as a **GitHub Actions scheduled workflow** (serverless, zero-infra)
 
 ## 🚀 Setup
 
-### 1. Create Discord Webhook
+This bot uses **two separate workflows** (KM and UK) so each channel posts independently with its own failure tracking.
 
+### 1. Create Discord Webhooks (one per channel)
+
+**For KM channel:**
 1. In your Discord server: **Server Settings → Integrations → Webhooks**
 2. Click **New Webhook**
-3. Pick the **target channel** where reminders should post
-4. Name it (e.g., `ShopeeSaleReminder`)
+3. Pick the **KM channel** where reminders should post
+4. Name it (e.g., `ShopeeSaleReminder-KM`)
 5. **Copy Webhook URL** and keep it secret
 
-### 2. Add GitHub Actions Secret
+**For UK channel:**
+Repeat the same steps but pick the **UK channel** and copy that webhook URL.
+
+### 2. Create GitHub Actions Environments
 
 1. Push this repo to GitHub
-2. Go to your repo: **Settings → Secrets and variables → Actions**
-3. Click **New repository secret**
-4. Name: `DISCORD_WEBHOOK_URL`
-5. Value: paste the webhook URL you copied
-6. Save
+2. Go to your repo: **Settings → Environments**
+3. Click **New environment**, name it `km`, click **Configure environment**
+4. Under **Environment secrets**, click **Add secret**:
+   - Name: `DISCORD_WEBHOOK_URL`
+   - Value: paste the **KM** webhook URL
+   - Save
+5. Go back to **Environments**, repeat for `uk`:
+   - Create environment `uk`
+   - Add secret `DISCORD_WEBHOOK_URL` with the **UK** webhook URL
 
 ### 3. Enable GitHub Actions
 
-The workflow is already configured in `.github/workflows/shopee-sale-reminder.yml`. It will automatically run daily once you push to GitHub.
+Two workflows are configured:
+- `.github/workflows/shopee-sale-reminder-km.yml` (KM channel)
+- `.github/workflows/shopee-sale-reminder-uk.yml` (UK channel)
+
+Both will run daily at 10:00 AM SGT once you push to GitHub.
 
 ## 🧪 Testing
 
@@ -59,13 +73,17 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
 
    ```bash
    cp .env.example .env
-   # Edit .env and paste your webhook URL
+   # Edit .env and paste BOTH webhook URLs (KM and UK)
    ```
 
 3. **Dry run** (no Discord post, just logs):
 
    ```bash
-   bun run remind:dry
+   # Test KM channel
+   bun run remind -- --channel=km --dry-run
+
+   # Test UK channel
+   bun run remind -- --channel=uk --dry-run
    ```
 
 4. **Test specific dates** (simulate scenarios):
@@ -73,38 +91,37 @@ The workflow is already configured in `.github/workflows/shopee-sale-reminder.ym
    ```bash
    # Note: when passing flags to a Bun script, use `--` (Bun convention)
 
-   # Simulate 2.2 sale day (dry run)
-   bun run remind -- --date=2026-02-02 --dry-run
+   # Simulate 2.2 sale day on KM channel (dry run)
+   bun run remind -- --channel=km --date=2026-02-02 --dry-run
 
-   # 1 week before 3.3 (dry run)
-   bun run remind -- --date=2026-02-26 --dry-run
+   # Simulate 1 week before 3.3 on UK channel (dry run)
+   bun run remind -- --channel=uk --date=2026-02-26 --dry-run
 
-   # 2 days before 4.4 (dry run)
-   bun run remind -- --date=2026-04-02 --dry-run
-
-   # 1 day before 5.5 (dry run)
-   bun run remind -- --date=2026-05-04 --dry-run
+   # 2 days before 4.4 on KM channel (dry run)
+   bun run remind -- --channel=km --date=2026-04-02 --dry-run
    ```
 
 5. **Real post** (actually sends to Discord):
    ```bash
    # Remove --dry-run to post for real
-   bun run remind -- --date=2026-02-02
+   bun run remind -- --channel=km --date=2026-02-02
    ```
 
-### Test GitHub Actions Workflow
+### Test GitHub Actions Workflows
 
-1. Go to your repo: **Actions → Shopee Sale Reminder**
+**Test KM workflow:**
+1. Go to your repo: **Actions → Shopee Sale Reminder (KM)**
 2. Click **Run workflow** (dropdown)
 3. **Optional inputs:**
    - `date`: test a specific date (e.g., `2026-02-02`)
    - `dry_run`: check the box to log only (no Discord post)
 4. Click **Run workflow**
-5. Check the logs to verify:
-   - Computed next sale date ✅
-   - Offset bucket (7/2/1/0) ✅
-   - Selected message ✅
-   - Posted to Discord (if not dry run) ✅
+5. Check the logs to verify it posts to KM channel
+
+**Test UK workflow:**
+Repeat the same steps but select **Shopee Sale Reminder (UK)** to test the UK channel.
+
+Both workflows run independently — if one fails, the other still posts.
 
 ## 📝 Message Examples
 
