@@ -18,8 +18,6 @@ function getWebhookUrl(): string {
   return url;
 }
 
-const WEBHOOK_URL = getWebhookUrl();
-
 interface SaleDate {
   month: number;
   day: number;
@@ -111,13 +109,13 @@ function getMessage(offset: number, saleDate: DateTime): string {
 
   switch (offset) {
     case 7:
-      return `🛒 **Heads up:** Shopee **${saleName}** sale is in **1 week** (on ${formattedDate})! Start prepping those carts and wishlists. 🎯`;
+      return `🛒 **Heads up:** Shopee **${saleName}** sale is in **1 week** 🦍`;
     case 2:
-      return `🔥 **Shopee ${saleName}** sale in **2 days** (${formattedDate})! Check your vouchers and stackable deals. Don't sleep on this! 💰`;
+      return `🔥 **Shopee ${saleName}** sale in **2 days** (${formattedDate})! 🦖`;
     case 1:
-      return `⏰ **Tomorrow is Shopee ${saleName}** (${formattedDate})! Last chance to finalize your wishlist. Don't sleep on those vouchers! 🚨`;
+      return `⏰ **Tomorrow is Shopee ${saleName}** (${formattedDate})! 🐛`;
     case 0:
-      return `🎉 **TODAY IS SHOPEE ${saleName}!** 🎉\n\nIt's go time! Drop your best deals in this channel. Time to speedrun that checkout. May the fastest clickers win! 🏃‍♂️💨\n\n*Bili na, walang awa!* 🛍️`;
+      return `🎉 **TODAY IS SHOPEE ${saleName}!**`;
     default:
       return "";
   }
@@ -127,7 +125,8 @@ function getMessage(offset: number, saleDate: DateTime): string {
  * Post message to Discord webhook
  */
 async function postToDiscord(message: string): Promise<void> {
-  const response = await fetch(WEBHOOK_URL, {
+  const url = getWebhookUrl();
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

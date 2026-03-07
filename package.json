@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "test": "bun test",
     "remind": "bun run src/remind.ts",
     "remind:dry": "bun run src/remind.ts --dry-run"
   },
