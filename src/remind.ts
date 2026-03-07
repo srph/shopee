@@ -23,7 +23,6 @@ function parseArgs(): { date?: string; dryRun: boolean } {
   return { date, dryRun };
 }
 
-
 function wrapText(text: string, width: number): string[] {
   const hardLines = text.split("\n");
   const out: string[] = [];
@@ -161,6 +160,7 @@ async function postToDiscord(message: string): Promise<void> {
 // ===================================================================
 //
 // Main execution flow
+// parse -> get next sale date -> get relevant message -> post to discord
 //
 // ===================================================================
 //
