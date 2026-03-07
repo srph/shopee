@@ -1,27 +1,28 @@
 #!/usr/bin/env node
 import { DateTime } from "luxon";
 
-// Parse CLI args
-const args = process.argv.slice(2);
-const dateOverride = args
-  .find((arg) => arg.startsWith("--date="))
-  ?.split("=")[1];
-const dryRun = args.includes("--dry-run");
-
-const TIMEZONE = "Asia/Singapore";
-
-function getWebhookUrl(): string {
-  const url = process.env.DISCORD_WEBHOOK_URL;
-  if (!url) {
-    throw new Error("Missing DISCORD_WEBHOOK_URL. Set it in your .env file.");
-  }
-  return url;
-}
-
 interface SaleDate {
   month: number;
   day: number;
 }
+
+const TIMEZONE = "Asia/Singapore";
+
+//
+// ===================================================================
+//
+// CLI utils
+//
+// ===================================================================
+//
+
+function parseArgs(): { date?: string; dryRun: boolean } {
+  const args = process.argv.slice(2);
+  const date = args.find((arg) => arg.startsWith("--date="))?.split("=")[1];
+  const dryRun = args.includes("--dry-run");
+  return { date, dryRun };
+}
+
 
 function wrapText(text: string, width: number): string[] {
   const hardLines = text.split("\n");
@@ -65,9 +66,16 @@ function boxPreview(text: string, maxInnerWidth = 72): string {
   return [top, ...middle, bottom].join("\n");
 }
 
-/**
- * Generate the 12 monthly Shopee sale dates (1.1, 2.2, ..., 12.12)
- */
+
+//
+// ===================================================================
+//
+// Sale utils
+//
+// ===================================================================
+//
+
+// Generate the 12 monthly Shopee sale dates (1.1, 2.2, ..., 12.12)
 function getSaleDates(): SaleDate[] {
   return Array.from({ length: 12 }, (_, i) => ({
     month: i + 1,
@@ -75,12 +83,11 @@ function getSaleDates(): SaleDate[] {
   }));
 }
 
-/**
- * Find the next upcoming Shopee sale date from a given reference date
- */
-function findNextSaleDate(referenceDate: DateTime): DateTime {
+// Find the next upcoming Shopee sale date from a given reference date
+function findNextSaleDate(reference: DateTime): DateTime {
   const saleDates = getSaleDates();
-  const currentYear = referenceDate.year;
+  
+  const currentYear = reference.year;
 
   // Check current year
   for (const sale of saleDates) {
@@ -88,7 +95,8 @@ function findNextSaleDate(referenceDate: DateTime): DateTime {
       { year: currentYear, month: sale.month, day: sale.day },
       { zone: TIMEZONE }
     );
-    if (saleDate >= referenceDate) {
+    
+    if (saleDate >= reference) {
       return saleDate;
     }
   }
@@ -100,12 +108,11 @@ function findNextSaleDate(referenceDate: DateTime): DateTime {
   );
 }
 
-/**
- * Get the message for a given offset and sale date
- */
-function getMessage(offset: number, saleDate: DateTime): string {
-  const saleName = saleDate.toFormat("M.M");
-  const formattedDate = saleDate.toFormat("MMMM d, yyyy");
+// Get the message for a given offset and sale date
+function getMessage(offset: number, sale: DateTime): string {
+  const saleName = sale.toFormat("M.M");
+  
+  const formattedDate = sale.toFormat("MMMM d, yyyy");
 
   switch (offset) {
     case 7:
@@ -121,11 +128,20 @@ function getMessage(offset: number, saleDate: DateTime): string {
   }
 }
 
-/**
- * Post message to Discord webhook
- */
+//
+// ===================================================================
+//
+// Discord function
+//
+// ===================================================================
+//
 async function postToDiscord(message: string): Promise<void> {
-  const url = getWebhookUrl();
+  const url = process.env.DISCORD_WEBHOOK_URL;
+
+  if (!url) {
+    throw new Error("Missing DISCORD_WEBHOOK_URL. Set it in your .env file.");
+  }
+  
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -141,10 +157,16 @@ async function postToDiscord(message: string): Promise<void> {
   }
 }
 
-/**
- * Main execution
- */
+//
+// ===================================================================
+//
+// Main execution flow
+//
+// ===================================================================
+//
 async function main() {
+  const { date, dryRun } = parseArgs();
+
   if (dryRun) {
     console.log(
       "🏃 DRY RUN: No Discord message will be posted (preview + logs only)."
@@ -152,8 +174,8 @@ async function main() {
   }
 
   // Determine "today" in SGT
-  const today = dateOverride
-    ? DateTime.fromISO(dateOverride, { zone: TIMEZONE }).startOf("day")
+  const today = date
+    ? DateTime.fromISO(date, { zone: TIMEZONE }).startOf("day")
     : DateTime.now().setZone(TIMEZONE).startOf("day");
 
   console.log(`🕐 Reference date (SGT): ${today.toFormat("yyyy-MM-dd (ccc)")}`);
