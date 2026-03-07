@@ -7,40 +7,15 @@ const dateOverride = args
   .find((arg) => arg.startsWith("--date="))
   ?.split("=")[1];
 const dryRun = args.includes("--dry-run");
-const channel = args.find((arg) => arg.startsWith("--channel="))?.split("=")[1];
 
 const TIMEZONE = "Asia/Singapore";
 
 function getWebhookUrl(): string {
-  const normalizedChannel = channel?.toLowerCase();
-
-  if (normalizedChannel === "km") {
-    const km = process.env.DISCORD_WEBHOOK_URL_KM;
-    if (!km) {
-      throw new Error(
-        "Missing DISCORD_WEBHOOK_URL_KM for --channel=km. Set it in the workflow env or your local .env."
-      );
-    }
-    return km;
+  const url = process.env.DISCORD_WEBHOOK_URL;
+  if (!url) {
+    throw new Error("Missing DISCORD_WEBHOOK_URL. Set it in your .env file.");
   }
-
-  if (normalizedChannel === "uk") {
-    const uk = process.env.DISCORD_WEBHOOK_URL_UK;
-    if (!uk) {
-      throw new Error(
-        "Missing DISCORD_WEBHOOK_URL_UK for --channel=uk. Set it in the workflow env or your local .env."
-      );
-    }
-    return uk;
-  }
-
-  if (normalizedChannel) {
-    throw new Error(
-      `Invalid --channel value: "${channel}". Expected --channel=km or --channel=uk.`
-    );
-  }
-
-  throw new Error("Missing --channel. Use --channel=km or --channel=uk.");
+  return url;
 }
 
 const WEBHOOK_URL = getWebhookUrl();
