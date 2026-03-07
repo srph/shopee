@@ -167,6 +167,14 @@ async function postToDiscord(message: string): Promise<void> {
 async function main() {
   const { date, dryRun } = parseArgs();
 
+  console.log(`
+  ▄██████▄   ██░░░██  ▄██████▄  ▄██████▄  ▄██████▄  ▄██████▄
+  ██░░░░░██  ██░░░██  ██░░░░██  ██░░░░██  ██░░░░██  ██░░░░██
+  ▀██████▄   ███████  ██░░░░██  ███████▀  ███████▀  ███████▀
+       ░░██  ██░░░██  ██░░░░██  ██░░░░    ██░░░░    ██░░░░
+  ▄██████▀   ██░░░██  ▀██████▀  ██░░      ▀██████▄  ▀██████▄
+  `)
+
   if (dryRun) {
     console.log(
       "🏃 DRY RUN: No Discord message will be posted (preview + logs only)."
